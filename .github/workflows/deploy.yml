@@ -52,16 +52,27 @@ jobs:
       with:
         version: v1.26.0
 
-    - name: Configure K3s Kubeconfig
+    - name: Set up Kubernetes Config
       run: |
+        mkdir -p $HOME/.kube
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-        export KUBECONFIG=$HOME/.kube/config
+        chmod 600 $HOME/.kube/config
+
+    - name: Debug Kubeconfig
+      run: |
+        ls -la $HOME/.kube/
+        cat $HOME/.kube/config || echo "Kubeconfig file is missing!"
+
+    - name: Update Kubeconfig for ngrok
+      run: |
         kubectl config set-cluster default --server=https://xyz.ngrok.io
 
-    - name: Test Connection
-      run: kubectl get nodes
+    - name: Test Kubernetes Connection
+      run: |
+        kubectl cluster-info
+        kubectl get nodes
 
-    - name: Deploy to K3s
+    - name: Deploy to Kubernetes
       run: |
         kubectl apply -f deployment.yaml
         kubectl apply -f service.yaml
