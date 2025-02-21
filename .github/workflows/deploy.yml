@@ -6,27 +6,61 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js (Use LTS)
+      uses: actions/setup-node@v3
       with:
-        node-version: '14'
-        
-    - name: Install dependencies
-      run: npm install
+        node-version: '18'
+        cache: 'npm'
 
-    - name: Build the app
-      run: npm run build
+    - name: Verify Node.js Version
+      run: node -v
 
-    - name: Build and push Docker image
+    - name: Clean and Install Dependencies
       run: |
-        docker build -t my-app:latest .
-        docker tag my-app:latest my-docker-repo/my-app:latest
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push my-docker-repo/my-app:latest
+        rm -rf node_modules package-lock.json
+        npm install
+
+    - name: Build Angular App
+      run: npm run build -- --output-path=dist/my-app --configuration=production
+
+    - name: Debug Angular Build Output
+      run: ls -la dist/my-app || echo "❌ Directory dist/my-app not found!"
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build --no-cache -t 027abdullah/my-app:latest .
+        docker push 027abdullah/my-app:latest
+
+    - name: Set up Kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: v1.26.0
+
+    - name: Configure Kubeconfig
+      run: |
+        echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
+        kubectl apply -f ingress.yaml
+
+    - name: Verify Deployment
+      run: kubectl get pods
