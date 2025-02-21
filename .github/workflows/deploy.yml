@@ -54,7 +54,10 @@ jobs:
 
     - name: Configure Kubeconfig
       run: |
+        mkdir -p $HOME/.kube
         echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config  # Ensure correct permissions
+
 
     - name: Deploy to Kubernetes
       run: |
