@@ -13,22 +13,21 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Setup Node.js
+    - name: Setup Node.js (Use LTS)
       uses: actions/setup-node@v3
       with:
         node-version: '18'
 
-    - name: Install Dependencies
-      run: npm install
+    - name: Clean and Install Dependencies
+      run: |
+        rm -rf node_modules package-lock.json
+        npm install
 
     - name: Build Angular App
-      run: npm run build --configuration=production
+      run: npm run build -- --output-path=dist/my-app --configuration=production
 
-    - name: Verify Build Directory
-      run: ls -la dist/ && ls -la dist/my-app || echo "Directory dist/my-app not found!"
-
-    - name: Ensure Correct Build Directory
-      run: mv dist/* dist/my-app || echo "No need to rename directory"
+    - name: Debug Angular Build Output
+      run: ls -la dist/my-app || echo "❌ Directory dist/my-app not found!"
 
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
@@ -41,7 +40,7 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t 027abdullah/my-app:latest .
+        docker build --no-cache -t 027abdullah/my-app:latest .
         docker push 027abdullah/my-app:latest
 
     - name: Set up Kubectl
