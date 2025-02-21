@@ -67,10 +67,6 @@ jobs:
       run: |
         kubectl config set-cluster default --server=https://xyz.ngrok.io
 
-    - name: Test Kubernetes Connection
-      run: |
-        kubectl get nodes
-
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f deployment.yaml
