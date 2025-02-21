@@ -22,19 +22,13 @@ jobs:
       run: npm install
 
     - name: Build Angular App
-      run: npm run build --prod
+      run: npm run build --configuration=production
 
     - name: Verify Build Directory
-      run: ls -la dist/my-app  # Debugging step
+      run: ls -la dist/ && ls -la dist/my-app || echo "Directory dist/my-app not found!"
 
-    - name: Build Docker Image
-      run: docker build -t my-app .
-
-    - name: Run Docker Container
-      run: docker run -d -p 8080:80 my-app
-
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+    - name: Ensure Correct Build Directory
+      run: mv dist/* dist/my-app || echo "No need to rename directory"
 
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
@@ -44,15 +38,6 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build Angular App
-      run: npm install && npm run build 
-
-    - name: Debug GitHub Actions Workspace
-      run: ls -la
-
-    - name: Debug Angular Build Output
-      run: ls -la dist/my-app || echo "Directory dist/my-app not found!"
 
     - name: Build and Push Docker Image
       run: |
@@ -66,7 +51,9 @@ jobs:
 
     - name: Configure Kubeconfig
       run: |
+        mkdir -p $HOME/.kube
         echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
 
     - name: Deploy to Kubernetes
       run: |
