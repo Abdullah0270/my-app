@@ -69,7 +69,6 @@ jobs:
 
     - name: Test Kubernetes Connection
       run: |
-        kubectl cluster-info
         kubectl get nodes
 
     - name: Deploy to Kubernetes
