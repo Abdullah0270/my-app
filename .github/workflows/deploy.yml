@@ -47,7 +47,12 @@ jobs:
 
     - name: Build Angular App
       run: npm install && npm run build 
-    
+
+    - name: Debug GitHub Actions Workspace
+      run: ls -la
+
+    - name: Debug Angular Build Output
+      run: ls -la dist/my-app || echo "Directory dist/my-app not found!"
 
     - name: Build and Push Docker Image
       run: |
