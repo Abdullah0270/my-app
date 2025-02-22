@@ -13,16 +13,13 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Setup Node.js (Use LTS)
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18'
         cache: 'npm'
 
-    - name: Verify Node.js Version
-      run: node -v
-
-    - name: Clean and Install Dependencies
+    - name: Install Dependencies
       run: |
         rm -rf node_modules package-lock.json
         npm install
@@ -44,7 +41,7 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build --no-cache -t 027abdullah/my-app:latest .
+        docker build -t 027abdullah/my-app:latest .
         docker push 027abdullah/my-app:latest
 
     - name: Set up Kubectl
@@ -52,26 +49,19 @@ jobs:
       with:
         version: v1.26.0
 
-    - name: Set up Kubernetes Config
+    - name: Configure Kubeconfig
       run: |
         mkdir -p $HOME/.kube
         echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
         chmod 600 $HOME/.kube/config
-
-    - name: Debug Kubeconfig
-      run: |
-        ls -la $HOME/.kube/
-        cat $HOME/.kube/config || echo "Kubeconfig file is missing!"
-
-    - name: Update Kubeconfig for ngrok
-      run: |
-        kubectl config set-cluster default --server=https://xyz.ngrok.io
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl cluster-info
 
     - name: Deploy to Kubernetes
       run: |
-        kubectl apply -f deployment.yaml
-        kubectl apply -f service.yaml
-        kubectl apply -f ingress.yaml
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        kubectl apply -f k8s/ingress.yaml
 
     - name: Verify Deployment
       run: kubectl get pods
