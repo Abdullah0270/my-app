@@ -48,7 +48,11 @@ jobs:
       uses: azure/setup-kubectl@v3
       with:
         version: v1.26.0
-
+    - name: Trust ngrok CA Certificate
+      run: |
+        echo "${{ secrets.NGROK_CA_CERT }}" > /usr/local/share/ca-certificates/ngrok.crt
+        update-ca-certificates
+     
     - name: Configure Kubeconfig
       run: |
         mkdir -p $HOME/.kube
