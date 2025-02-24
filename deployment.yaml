@@ -12,8 +12,8 @@ spec:
       labels:
         app: my-app
     spec:
-     containers:
-      - name: my-app
-        image: 027abdullah/my-app:v1
-        ports:
-        - containerPort: 80
+      containers:
+        - name: my-app
+          image: 027abdullah/my-app:v1
+          ports:
+            - containerPort: 80
