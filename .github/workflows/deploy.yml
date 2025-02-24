@@ -63,8 +63,7 @@ jobs:
     #     chmod 600 $HOME/.kube/config
     #     export KUBECONFIG=$HOME/.kube/config
     #     kubectl config set-cluster default --insecure-skip-tls-verify=true
-     # kubectl apply -f k8s/service.yaml
-        # kubectl apply -f k8s/ingress.yaml
+     
 
     - name: Configure Kubeconfig
       run: |
@@ -76,10 +75,15 @@ jobs:
     - name: Install kubectl
       run: sudo apt-get install -y kubectl
 
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f k8s/deployment.yaml
+    # - name: Deploy to Kubernetes
+    #   run: |
+    #     kubectl apply -f k8s/deployment.yaml
+    #     kubectl apply -f k8s/service.yaml
+    #     kubectl apply -f k8s/ingress.yaml
        
 
-    - name: Verify Deployment
-      run: kubectl get pods
+    # - name: Verify Deployment
+    #   run: kubectl get pods
+    - name: Get K3s Nodes
+      run: |
+       kubectl get nodes
