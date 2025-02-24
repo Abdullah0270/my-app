@@ -19,16 +19,16 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: Install Dependencies
-      run: |
-        rm -rf node_modules package-lock.json
-        npm install
+    # - name: Install Dependencies
+    #   run: |
+    #     rm -rf node_modules package-lock.json
+    #     npm install
 
-    - name: Build Angular App
-      run: npm run build -- --output-path=dist/my-app --configuration=production
+    # - name: Build Angular App
+    #   run: npm run build -- --output-path=dist/my-app --configuration=production
 
-    - name: Debug Angular Build Output
-      run: ls -la dist/my-app || echo "❌ Directory dist/my-app not found!"
+    # - name: Debug Angular Build Output
+    #   run: ls -la dist/my-app || echo "❌ Directory dist/my-app not found!"
 
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
@@ -73,7 +73,10 @@ jobs:
         kubectl config set-cluster default --insecure-skip-tls-verify=true
 
     - name: Install kubectl
-      run: sudo apt-get install -y kubectl
+      run: |
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
 
     # - name: Deploy to Kubernetes
     #   run: |
@@ -84,6 +87,7 @@ jobs:
 
     # - name: Verify Deployment
     #   run: kubectl get pods
-    - name: Get K3s Nodes
+    
+    - name: Verify Kubernetes cluster
       run: |
-       kubectl get nodes
+        kubectl --kubeconfig=$HOME/.kube/config get nodes
