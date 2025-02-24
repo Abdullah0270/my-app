@@ -53,16 +53,16 @@ jobs:
     #     echo "$#{{ secrets.NGROK_CA_CERT }}" > /usr/local/share/ca-certificates/ngrok.crt
     #     update-ca-certificates
      
-    - name: Check Kubernetes Cluster Connection
-      run: kubectl cluster-info
+    # - name: Check Kubernetes Cluster Connection
+    #   run: kubectl cluster-info
 
-    - name: Configure Kubeconfig
-      run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-        chmod 600 $HOME/.kube/config
-        export KUBECONFIG=$HOME/.kube/config
-        kubectl config set-cluster default --insecure-skip-tls-verify=true
+    # - name: Configure Kubeconfig
+    #   run: |
+    #     mkdir -p $HOME/.kube
+    #     echo "$#{{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+    #     chmod 600 $HOME/.kube/config
+    #     export KUBECONFIG=$HOME/.kube/config
+    #     kubectl config set-cluster default --insecure-skip-tls-verify=true
 
     - name: Deploy to Kubernetes
       run: |
