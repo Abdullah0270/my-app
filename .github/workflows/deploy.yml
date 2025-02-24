@@ -90,5 +90,5 @@ jobs:
     
     - name: Verify Kubernetes cluster
       run: |
-        kubectl --kubeconfig=$HOME/.kube/config --insecure-skip-tls-verify=true get pods
+       kubectl --kubeconfig=$HOME/.kube/config --insecure-skip-tls-verify=true get pods
 
