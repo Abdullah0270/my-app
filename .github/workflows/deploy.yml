@@ -52,7 +52,7 @@ jobs:
     #   run: |
     #     echo "$#{{ secrets.NGROK_CA_CERT }}" > /usr/local/share/ca-certificates/ngrok.crt
     #     update-ca-certificates
-     
+
     # - name: Check Kubernetes Cluster Connection
     #   run: kubectl cluster-info
 
@@ -63,12 +63,21 @@ jobs:
     #     chmod 600 $HOME/.kube/config
     #     export KUBECONFIG=$HOME/.kube/config
     #     kubectl config set-cluster default --insecure-skip-tls-verify=true
+     # kubectl apply -f k8s/service.yaml
+        # kubectl apply -f k8s/ingress.yaml
+
+    - name: Configure Kubeconfig
+      run: |
+        echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+        kubectl config set-cluster default --insecure-skip-tls-verify=true
+
+    - name: Install kubectl
+      run: sudo apt-get install -y kubectl
 
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
-        kubectl apply -f k8s/ingress.yaml
+       
 
     - name: Verify Deployment
       run: kubectl get pods
