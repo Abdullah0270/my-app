@@ -53,6 +53,9 @@ jobs:
     #     echo "$#{{ secrets.NGROK_CA_CERT }}" > /usr/local/share/ca-certificates/ngrok.crt
     #     update-ca-certificates
      
+    - name: Check Kubernetes Cluster Connection
+      run: kubectl cluster-info
+
     - name: Configure Kubeconfig
       run: |
         mkdir -p $HOME/.kube
