@@ -68,7 +68,7 @@ jobs:
     - name: Configure Kubeconfig
       run: |
         mkdir -p $HOME/.kube
-        echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> $GITHUB_ENV 
+         echo "$#{{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
         cat ${HOME}/.kube/config
         kubectl config set-cluster default --insecure-skip-tls-verify=true
 
