@@ -65,14 +65,16 @@ jobs:
     #     kubectl config set-cluster default --insecure-skip-tls-verify=true
      
 
-    - name: Set up Kubernetes config
+    - name: Set up KUBECONFIG
       run: |
-       mkdir -p $HOME/.kube
-       echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-       chmod 600 $HOME/.kube/config
-       export KUBECONFIG=$HOME/.kube/config
-       kubectl config set-cluster k3s --server=https://192.168.1.43:6443 --insecure-skip-tls-verify=true
-       kubectl get nodes
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl config set-cluster k3s --server=https://100.77.47.52:6443 --insecure-skip-tls-verify=true
+        kubectl get nodes
+      shell: bash
+
 
     - name: Install kubectl
       run: |
