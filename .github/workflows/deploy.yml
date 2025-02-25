@@ -68,7 +68,7 @@ jobs:
     - name: Configure Kubeconfig
       run: |
         mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+        run: echo "KUBECONFIG=/etc/rancher/k3s/k3s.yaml" >> $GITHUB_ENV 
         cat ${HOME}/.kube/config
         kubectl config set-cluster default --insecure-skip-tls-verify=true
 
@@ -78,15 +78,15 @@ jobs:
         chmod +x ./kubectl
         sudo mv ./kubectl /usr/local/bin/kubectl
 
-    # - name: Deploy to Kubernetes
-    #   run: |
-    #     kubectl apply -f k8s/deployment.yaml
-    #     kubectl apply -f k8s/service.yaml
-    #     kubectl apply -f k8s/ingress.yaml
+    - name: Deploy to Kubernetes
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        kubectl apply -f k8s/ingress.yaml
        
 
-    # - name: Verify Deployment
-    #   run: kubectl get pods
+    - name: Verify Deployment
+      run: kubectl get pods
     
     # - name: Verify Kubernetes cluster
     #   run: |
