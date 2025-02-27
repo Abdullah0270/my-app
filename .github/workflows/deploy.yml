@@ -76,7 +76,6 @@ jobs:
       shell: bash
 
 
-
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/deployment.yaml
